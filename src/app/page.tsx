@@ -1,10 +1,19 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { Home, Grid, Heart, User } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+
   return (
     <>
       {/* Top Promo Bar */}
@@ -136,31 +145,16 @@ export default function HomePage() {
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-sm md:gap-md">
-            <ProductCard
-              title="Cama Confort Mascotas"
-              price={850}
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuD81YY_k1TMJ6afLoTSjRtuSrOSdl5sqdULPtRnzAyXidMnSiNKlvnW6a-XPirv5AysjGWgRxdQ04p1mbweRdl5l3By3pwbfR5kj9cOwjvpG_7-ph2AjPg1PFd_wfOkth9U3KQ4A53UO8e_qSMaNH3YU9zHFDfIDKXdIucqcqXJVf2BvdnADCYgCNy_WjgBTZqikERgVE6bhimCZ1LLSnuSgPSXbRNy0aw2BdzbE6cUF5fTgDqB_fxw"
-              imageAlt="Cama Confort Mascotas"
-              isNew={true}
-            />
-            <ProductCard
-              title="Plato Cerámica Minimalista"
-              price={320}
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuAc4dHlXRcCGsb-hqPLfcObmAGO8u5YGyk46bcWGx__CfspXiuBWdIn16jCenrzuRcGKhOqtrzst9F7KLJRw6QoHY-HaLaaVN5jokhEKiPd9GctgpEJAbTAzgIG0DmlwUgvvHbHK2XrLLKaUcHtNrizLg_4Eg8tuoYDSWyozck6iDuNzKWRiYAA0Q2udfisOA_aXOK_ZDN3PW42IFi2MuUobd2bycUcer-vBYr40JmW9obaAcaNtF1n"
-              imageAlt="Plato Cerámica Minimalista"
-            />
-            <ProductCard
-              title="Correa Trenzada Reforzada"
-              price={450}
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDU0ndh1iMOaNEKisC7gqkAqWZkBQ6-eSJWYz3tgAJa1vEy8jgFXfNByDv4klVIsWP-rtsUDvwEe5gA2B84j8AStPZdym86OrbJGvneMn7e2u5ZciW6phT_AUY5ssSktFAezQRGa6itZmcRD9HSGxcTZ4o-UEjykml9xeUJZgVLjsxwF8_SkRQrXzyU_VqA9y7zqf5Hd2A5bsLPKdu_-3z-Ir3OYX8yEvJVs8EGgvAxDT9h4Fta-eiu"
-              imageAlt="Correa Trenzada Reforzada"
-            />
-            <ProductCard
-              title="Tote Bag Mizton Edición Limitada"
-              price={290}
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuB6Ay3X3cR9FZzbVW16Nbq0ytLmJIV3IbhTV32ImReAPWEGjeAe2IgbE3exRDr6dZpFc-nup83BC5Oe7U6rhTkp8t9VSnVVhWY_4WbBZKUjtZEJjPg8DZcMAJ2dPhZOSbsI9Mh2-qddF7w3B8rKI8Yul9vL02l8303lBwwS_l5GhcJ5QGHcw4C8pFo8xJkWnQfG93kGDZlqFbIwXYHBVH-j10aZGWdYXAaCDmsp9CDO_Q_BFdI6Fo4a"
-              imageAlt="Tote Bag Mizton Edición Limitada"
-            />
+            {products?.map((product) => (
+              <ProductCard
+                key={product.id || product.title}
+                title={product.title}
+                price={product.price}
+                imageUrl={product.image_url || product.imageUrl}
+                imageAlt={product.title}
+                isNew={product.is_new}
+              />
+            ))}
           </div>
         </section>
       </main>
