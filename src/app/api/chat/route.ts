@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let sanitizedHistory = (history || []).map((msg: any) => ({
+    const sanitizedHistory = (history || []).map((msg: any) => ({
       role: msg.role === "assistant" || msg.role === "model" ? "model" : "user",
       parts: msg.parts,
     }));
