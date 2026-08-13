@@ -37,7 +37,8 @@ export default function ChatWidget() {
 
     try {
       // Gemini expects: { role: 'user' | 'model', parts: [{ text: string }] }
-      const historyForApi = newMessages.slice(0, -1).map((msg) => ({
+      // Exclude the very first message (welcome message) and the last message (current user input)
+      const historyForApi = newMessages.filter((_, i) => i !== 0).slice(0, -1).map((msg) => ({
         role: msg.role,
         parts: [{ text: msg.text }],
       }));

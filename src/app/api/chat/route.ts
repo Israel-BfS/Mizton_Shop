@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }));
 
     // El primer mensaje debe ser 'user'
-    while (sanitizedHistory.length > 0 && sanitizedHistory[0].role === "model") {
+    while (sanitizedHistory.length > 0 && sanitizedHistory[0].role !== "user") {
       sanitizedHistory.shift();
     }
 
