@@ -2,25 +2,22 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const message = body.message;
 
     if (!message) {
-      return NextResponse.json({ error: 'El mensaje es requerido' }, { status: 400 });
+      return NextResponse.json({ error: 'Mensaje no proporcionado' }, { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'GEMINI_API_KEY no configurada' }, { status: 500 });
+      return NextResponse.json({ error: 'Variable GEMINI_API_KEY no encontrada en el servidor' }, { status: 500 });
     }
 
-    const systemPrompt = `Eres el asistente virtual oficial de Mizton Shop (tienda en línea en México).
-- Tono: Amable, formal y conciso en español de México.
-- Envíos: Todo México, 10 a 15 días hábiles.
-- Pagos: Tarjetas de crédito/débito procesadas de forma segura por Stripe.
-- Devoluciones: 7 días naturales por defectos de fábrica.
-Si la duda requiere consultar un pedido específico, solicita amablemente el correo electrónico del cliente.`;
+    const systemPrompt = "Eres el asistente oficial de Mizton Shop (tienda en México). Respuestas cortas, amables y en español neutro de México. Envíos: 10-15 días hábiles a todo México. Pagos: Tarjeta con Stripe. Devoluciones: 7 días.";
 
-    const response = await fetch(
+    // Intentar llamada con gemini-1.5-flash
+    const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
@@ -29,25 +26,27 @@ Si la duda requiere consultar un pedido específico, solicita amablemente el cor
           contents: [
             {
               role: 'user',
-              parts: [{ text: `${systemPrompt}\n\nPregunta del cliente: ${message}` }]
+              parts: [{ text: `${systemPrompt}\n\nPregunta: ${message}` }]
             }
           ]
         })
       }
     );
 
-    const data = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
-      console.error('Error desde la API de Gemini:', data);
-      return NextResponse.json({ error: 'Error al comunicarse con la IA' }, { status: 500 });
+    if (!res.ok) {
+      console.error('Error Gemini API:', data);
+      return NextResponse.json({ 
+        error: data.error?.message || 'Error en la respuesta de Gemini' 
+      }, { status: 500 });
     }
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lo siento, no pude procesar tu respuesta.';
-
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude generar una respuesta.';
     return NextResponse.json({ reply });
-  } catch (error) {
-    console.error('Error en API Chat:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Error interno';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

@@ -1,82 +1,59 @@
-import { supabase } from "@/lib/supabaseClient";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React from 'react';
+import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
 
 export default async function ProductDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const { data: product } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
+
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
     .single();
 
-  if (!product) {
+  if (error || !product) {
     return (
-      <>
-        <Header />
-        <main className="flex-grow flex items-center justify-center p-20">
-          <h1 className="font-headline-md text-error">Producto no encontrado</h1>
-        </main>
-        <Footer />
-      </>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-800">Producto no encontrado</h2>
+        <p className="mt-2 text-gray-600">El artículo que buscas no existe o fue retirado.</p>
+        <Link href="/" className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
+          Volver a la tienda
+        </Link>
+      </div>
     );
   }
 
-  const displayPrice = Number(product.price_mxn || product.price || 0);
-  const formattedPrice = new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-  }).format(displayPrice);
-
-  const images = product.images;
-  const imageUrl = product.image_url || product.imageUrl;
-  
-  const rawImage = Array.isArray(images) && images.length > 0 ? images[0] : imageUrl;
-  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.avif$/, '').replace(/_\.webp$/, '') : null;
-  const finalImageUrl = cleanImage
-    ? cleanImage.startsWith("//")
-      ? "https:" + cleanImage
-      : cleanImage
-    : "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
+  const rawImage = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null;
+  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '') : 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop&q=80';
+  const price = Number(product.price_mxn ?? product.price ?? 0);
 
   return (
-    <>
-      <Header />
-      <main className="flex-grow max-w-max-width mx-auto px-margin-mobile py-xl md:px-margin-desktop md:py-20 w-full flex flex-col md:flex-row gap-lg">
-        {/* Gallery */}
-        <div className="w-full md:w-1/2 relative h-[300px] md:h-[500px] rounded-xl overflow-hidden bg-surface-container-high border border-outline-variant">
-           {/* eslint-disable-next-line @next/next/no-img-element */}
-           <img
-             src={finalImageUrl}
-             alt={product.title}
-             className="object-cover w-full h-full"
-             onError={(e) => {
-               e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
-             }}
-           />
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      <Link href="/" className="text-sm text-gray-500 hover:text-emerald-600 mb-6 inline-block">
+        &larr; Volver al catálogo
+      </Link>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="rounded-xl overflow-hidden bg-gray-50 border p-4 flex items-center justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={cleanImage} alt={product.title} className="w-full max-h-[500px] object-contain rounded-lg" />
         </div>
-        
-        {/* Info */}
-        <div className="w-full md:w-1/2 flex flex-col gap-md">
-           <h1 className="font-display-lg text-display-lg font-bold text-on-surface">{product.title}</h1>
-           <p className="font-headline-md text-headline-md text-primary">{formattedPrice}</p>
-           
-           <div 
-             className="prose prose-sm md:prose-base prose-neutral mt-4 font-body-md text-on-surface-variant"
-             dangerouslySetInnerHTML={{ __html: product.description || "Sin descripción." }}
-           />
-
-           <div className="mt-8 flex flex-col gap-4">
-             <button className="bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full hover:bg-surface-tint transition-all shadow-md w-full">
-               Añadir al Carrito
-             </button>
-           </div>
+        <div className="flex flex-col justify-center">
+          <span className="text-xs uppercase font-bold tracking-wider text-emerald-600 mb-2">{product.category || 'General'}</span>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.title}</h1>
+          <p className="text-3xl font-extrabold text-gray-900 mb-6">MXN ${price.toFixed(2)}</p>
+          <div className="prose prose-sm text-gray-700 mb-8" dangerouslySetInnerHTML={{ __html: product.description || '<p>Sin descripción disponible.</p>' }} />
+          <button className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md">
+            Comprar Ahora
+          </button>
         </div>
-      </main>
-      <Footer />
-    </>
+      </div>
+    </div>
   );
 }
