@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import CheckoutButton from '@/components/CheckoutButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,9 +50,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
           <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.title}</h1>
           <p className="text-3xl font-extrabold text-gray-900 mb-6">MXN ${price.toFixed(2)}</p>
           <div className="prose prose-sm text-gray-700 mb-8" dangerouslySetInnerHTML={{ __html: product.description || '<p>Sin descripción disponible.</p>' }} />
-          <button className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md">
-            Comprar Ahora
-          </button>
+          <CheckoutButton productId={product.id} />
         </div>
       </div>
     </div>
