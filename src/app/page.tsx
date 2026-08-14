@@ -152,6 +152,7 @@ export default async function HomePage() {
                 title={product.title}
                 price={product.price}
                 price_mxn={product.price_mxn}
+                images={product.images}
                 imageUrl={product.image_url || product.imageUrl}
                 imageAlt={product.title}
                 isNew={product.is_new}

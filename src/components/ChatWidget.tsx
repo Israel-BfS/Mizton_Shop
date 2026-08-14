@@ -36,27 +36,21 @@ export default function ChatWidget() {
     setIsLoading(true);
 
     try {
-      // Gemini expects: { role: 'user' | 'model', parts: [{ text: string }] }
-      // Exclude the very first message (welcome message) and the last message (current user input)
-      const historyForApi = newMessages.filter((_, i) => i !== 0).slice(0, -1).map((msg) => ({
-        role: msg.role,
-        parts: [{ text: msg.text }],
-      }));
-
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          history: historyForApi,
-          message: userMessage,
-        }),
+        body: JSON.stringify({ message: userMessage }),
       });
 
       if (!response.ok) throw new Error("Error en la respuesta del servidor");
 
       const data = await response.json();
       
-      setMessages((prev) => [...prev, { role: "model", text: data.text }]);
+      if (data.reply) {
+        setMessages((prev) => [...prev, { role: "model", text: data.reply }]);
+      } else {
+        setMessages((prev) => [...prev, { role: "model", text: "Hubo un error de formato en la respuesta." }]);
+      }
     } catch (error) {
       console.error(error);
       setMessages((prev) => [...prev, { role: "model", text: "Lo siento, ha ocurrido un error al procesar tu solicitud." }]);

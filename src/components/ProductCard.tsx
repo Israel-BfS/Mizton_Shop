@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export interface ProductCardProps {
@@ -6,7 +5,8 @@ export interface ProductCardProps {
   title: string;
   price?: number;
   price_mxn?: number;
-  imageUrl: string;
+  images?: string[];
+  imageUrl?: string;
   imageAlt: string;
   isNew?: boolean;
 }
@@ -16,6 +16,7 @@ export default function ProductCard({
   title,
   price,
   price_mxn,
+  images,
   imageUrl,
   imageAlt,
   isNew = false,
@@ -29,23 +30,28 @@ export default function ProductCard({
     currency: "MXN",
   }).format(displayPrice);
 
-  // Safe image mapping
-  const finalImageUrl = imageUrl
-    ? imageUrl.startsWith("//")
-      ? "https:" + imageUrl
-      : imageUrl
-    : "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4"; // Placeholder if no image
+  // Image extraction logic
+  const rawImage = Array.isArray(images) && images.length > 0 ? images[0] : imageUrl;
+  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.avif$/, '').replace(/_\.webp$/, '') : null;
+  
+  const finalImageUrl = cleanImage
+    ? cleanImage.startsWith("//")
+      ? "https:" + cleanImage
+      : cleanImage
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
 
   return (
     <Link href={`/products/${id}`} className="block">
       <div className="bg-surface-container-lowest border border-outline-variant rounded group hover:shadow-[0px_4px_12px_rgba(0,0,0,0.05)] transition-all overflow-hidden flex flex-col h-full">
         <div className="relative h-40 md:h-56 w-full bg-surface-container-high">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={finalImageUrl}
             alt={imageAlt || title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, 25vw"
+            className="object-cover w-full h-full"
+            onError={(e) => {
+              e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
+            }}
           />
           {isNew && (
             <div className="absolute top-2 left-2 bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider z-10">

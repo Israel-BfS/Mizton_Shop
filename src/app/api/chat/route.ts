@@ -45,9 +45,7 @@ Si la duda requiere consultar un pedido específico, solicita amablemente el cor
 
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lo siento, no pude procesar tu respuesta.';
 
-    // Note: returning 'text' instead of 'reply' to maintain compatibility with the existing ChatWidget.tsx
-    // which expects data.text
-    return NextResponse.json({ text: reply });
+    return NextResponse.json({ reply });
   } catch (error) {
     console.error('Error en API Chat:', error);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
