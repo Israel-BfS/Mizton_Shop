@@ -1,55 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from 'next/server';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-const SYSTEM_INSTRUCTION = `
-Identidad: Eres el asistente virtual de "Mizton Shop", una tienda de variedad en México con productos para mascotas, ropa y novedades.
-Tono: Amable, formal y directo. Usa español de México.
-Políticas clave:
-- Envíos a todo México con tiempo estimado de entrega de 10 a 15 días hábiles.
-- Pagos seguros procesados por Stripe (tarjetas de crédito y débito).
-- Devoluciones permitidas dentro de los primeros 7 días tras recibir el producto si presenta defectos.
-Regla importante: Si no sabes la respuesta a una duda específica sobre una orden, pide el correo electrónico del cliente para que el equipo de soporte humano lo contacte.
-`;
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { history, message } = await req.json();
+    const { message } = await req.json();
 
     if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+      return NextResponse.json({ error: 'El mensaje es requerido' }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction: SYSTEM_INSTRUCTION,
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sanitizedHistory = (history || []).map((msg: any) => ({
-      role: msg.role === "assistant" || msg.role === "model" ? "model" : "user",
-      parts: msg.parts,
-    }));
-
-    // El primer mensaje debe ser 'user'
-    while (sanitizedHistory.length > 0 && sanitizedHistory[0].role !== "user") {
-      sanitizedHistory.shift();
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'GEMINI_API_KEY no configurada' }, { status: 500 });
     }
 
-    const chat = model.startChat({
-      history: sanitizedHistory,
-    });
+    const systemPrompt = `Eres el asistente virtual oficial de Mizton Shop (tienda en línea en México).
+- Tono: Amable, formal y conciso en español de México.
+- Envíos: Todo México, 10 a 15 días hábiles.
+- Pagos: Tarjetas de crédito/débito procesadas de forma segura por Stripe.
+- Devoluciones: 7 días naturales por defectos de fábrica.
+Si la duda requiere consultar un pedido específico, solicita amablemente el correo electrónico del cliente.`;
 
-    const result = await chat.sendMessage(message);
-    const response = await result.response;
-
-    return NextResponse.json({ text: response.text() });
-  } catch (error: unknown) {
-    console.error("Error in chat API:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `${systemPrompt}\n\nPregunta del cliente: ${message}` }]
+            }
+          ]
+        })
+      }
     );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error desde la API de Gemini:', data);
+      return NextResponse.json({ error: 'Error al comunicarse con la IA' }, { status: 500 });
+    }
+
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lo siento, no pude procesar tu respuesta.';
+
+    // Note: returning 'text' instead of 'reply' to maintain compatibility with the existing ChatWidget.tsx
+    // which expects data.text
+    return NextResponse.json({ text: reply });
+  } catch (error) {
+    console.error('Error en API Chat:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
