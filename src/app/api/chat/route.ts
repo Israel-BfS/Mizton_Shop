@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 - Devoluciones: 7 días naturales por defectos de fábrica.
 Si solicitan rastreo específico de un pedido, solicita su correo de compra para remitirlo a soporte.`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
