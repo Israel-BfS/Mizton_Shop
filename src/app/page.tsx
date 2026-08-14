@@ -148,14 +148,7 @@ export default async function HomePage() {
             {products?.map((product) => (
               <ProductCard
                 key={product.id || product.title}
-                id={product.id}
-                title={product.title}
-                price={product.price}
-                price_mxn={product.price_mxn}
-                images={product.images}
-                imageUrl={product.image_url || product.imageUrl}
-                imageAlt={product.title}
-                isNew={product.is_new}
+                product={product}
               />
             ))}
           </div>

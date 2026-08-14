@@ -1,75 +1,47 @@
-import Link from "next/link";
+'use client';
 
-export interface ProductCardProps {
+import React, { useState } from 'react';
+import Link from 'next/link';
+
+interface Product {
   id: string | number;
   title: string;
-  price?: number;
   price_mxn?: number;
+  price?: number;
   images?: string[];
-  imageUrl?: string;
-  imageAlt: string;
-  isNew?: boolean;
+  category?: string;
+  is_new?: boolean;
 }
 
-export default function ProductCard({
-  id,
-  title,
-  price,
-  price_mxn,
-  images,
-  imageUrl,
-  imageAlt,
-  isNew = false,
-}: ProductCardProps) {
-  // Safe price mapping
-  const displayPrice = Number(price_mxn || price || 0);
+export default function ProductCard({ product }: { product: Product }) {
+  const [imageError, setImageError] = useState(false);
 
-  // Format price to MXN
-  const formattedPrice = new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-  }).format(displayPrice);
+  const rawImage = Array.isArray(product?.images) && product.images.length > 0 ? product.images[0] : null;
+  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '') : null;
+  const displayPrice = Number(product?.price_mxn ?? product?.price ?? 0);
 
-  // Image extraction logic
-  const rawImage = Array.isArray(images) && images.length > 0 ? images[0] : imageUrl;
-  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.avif$/, '').replace(/_\.webp$/, '') : null;
-  
-  const finalImageUrl = cleanImage
-    ? cleanImage.startsWith("//")
-      ? "https:" + cleanImage
-      : cleanImage
-    : "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
+  const fallbackImage = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60';
 
   return (
-    <Link href={`/products/${id}`} className="block">
-      <div className="bg-surface-container-lowest border border-outline-variant rounded group hover:shadow-[0px_4px_12px_rgba(0,0,0,0.05)] transition-all overflow-hidden flex flex-col h-full">
-        <div className="relative h-40 md:h-56 w-full bg-surface-container-high">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={finalImageUrl}
-            alt={imageAlt || title}
-            className="object-cover w-full h-full"
-            onError={(e) => {
-              e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDWjbqtzQlLhzuiRjIaPFNqXq1KtvCLXqONz6zlVQvF5YjPSVkrHqufGjifBK1HnB-jrJvFICv5uaVKOC3YXZ6Tb14v-DxS8r2ohZZnDF_uGcNajCsbfvfqq0FMdjVhcvQ3K32usnAuZF83KeTpR-ReUTldufVhexc2DCNG5MtIOFlhGlzUyIhQUuJbINdrrSVo_0UrkCfaAAm-KtT2fBaGi-O0owILFce2qVXFGBPf62LAmBOni2z4";
-            }}
-          />
-          {isNew && (
-            <div className="absolute top-2 left-2 bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider z-10">
-              Nuevo
-            </div>
-          )}
-        </div>
-        <div className="p-3 md:p-4 flex flex-col flex-grow">
-          <h3 className="font-body-md text-body-md font-semibold text-on-surface line-clamp-2 mb-1">
-            {title}
-          </h3>
-          <p className="font-label-md text-label-md text-primary mt-auto">
-            MXN {formattedPrice}
-          </p>
-          <button className="mt-3 w-full border border-outline text-on-surface font-label-sm text-label-sm py-2 rounded hover:bg-surface-container-low transition-colors">
-            Agregar
-          </button>
-        </div>
+    <Link className="group block border rounded-lg overflow-hidden hover:shadow-md transition bg-white" href={`/products/${product?.id || ''}`}>
+      <div className="aspect-square w-full overflow-hidden bg-gray-100 relative">
+        <img
+          src={!imageError && cleanImage ? cleanImage : fallbackImage}
+          alt={product?.title || 'Producto'}
+          onError={() => setImageError(true)}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        {product?.is_new && (
+          <div className="absolute top-2 left-2 bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider z-10">
+            Nuevo
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="font-medium text-gray-900 line-clamp-2">{product?.title || 'Sin título'}</h3>
+        <p className="mt-2 text-lg font-bold text-emerald-600">
+          MXN ${displayPrice.toFixed(2)}
+        </p>
       </div>
     </Link>
   );
