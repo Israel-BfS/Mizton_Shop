@@ -42,14 +42,12 @@ export default function ChatWidget() {
         body: JSON.stringify({ message: userMessage }),
       });
 
-      if (!response.ok) throw new Error("Error en la respuesta del servidor");
-
       const data = await response.json();
-      
-      if (data.reply) {
-        setMessages((prev) => [...prev, { role: "model", text: data.reply }]);
+
+      if (!response.ok || data.error) {
+        setMessages((prev) => [...prev, { role: "model", text: `Error: ${data.error || "No se pudo procesar la consulta."}` }]);
       } else {
-        setMessages((prev) => [...prev, { role: "model", text: "Hubo un error de formato en la respuesta." }]);
+        setMessages((prev) => [...prev, { role: "model", text: data.reply || "Hubo un error de formato en la respuesta." }]);
       }
     } catch (error) {
       console.error(error);
