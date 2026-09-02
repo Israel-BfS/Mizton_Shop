@@ -1,71 +1,62 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
+const apiKey = process.env.GEMINI_API_KEY;
 
-const MODELS = [
-  'gemini-flash-latest',
-  'gemini-pro-latest',
-  'gemini-1.5-flash-8b-latest'
-];
+if (!apiKey) {
+  console.warn('GEMINI_API_KEY is not defined in environment variables.');
+}
+
+const genAI = new GoogleGenerativeAI(apiKey || '');
+
+const SYSTEM_INSTRUCTION = `
+Eres el asistente virtual oficial de "Mizton Shop", una tienda online en México especializada en productos para mascotas y cuidado del hogar.
+Tus responsabilidades:
+- Responder dudas sobre productos, métodos de pago y tiempos de entrega de forma concisa, educada y clara.
+- Métodos de pago aceptados: Tarjetas de crédito/débito y pagos seguros procesados vía Stripe.
+- Envíos: Cobertura en toda la República Mexicana. Tiempos de entrega estándar estimados entre 5 a 12 días hábiles (según el proveedor/paquetería).
+- Si un usuario pregunta por soporte específico de una orden existente, indícale que proporcione su número de pedido o escriba directamente al correo de soporte: bfs237@gmail.com.
+- Mantén las respuestas breves (máximo 2 párrafos) y directas.
+`;
 
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
-
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json({ error: 'Mensaje no válido' }, { status: 400 });
-    }
-
-    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Falta configurar GEMINI_API_KEY' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'API key not configured' },
+        { status: 500 }
+      );
     }
 
-    const systemPrompt = `Eres el asistente virtual oficial de Mizton Shop (tienda en línea de variedad en México).
-- Tono: Formal, claro y conciso en español de México.
-- Envíos: A todo México en 10 a 15 días hábiles.
-- Pagos: Tarjetas de crédito y débito vía Stripe.
-- Devoluciones: 7 días naturales por defectos de fábrica.
-Si solicitan rastreo específico de un pedido, solicita su correo para remitirlo a soporte.`;
+    const { messages, message } = await req.json();
 
-    const requestBody = JSON.stringify({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `${systemPrompt}\n\nPregunta del cliente: ${message}` }]
-        }
-      ]
+    // Permitir recibir un prompt simple o el historial completo de mensajes
+    const incomingMessage = message || (Array.isArray(messages) && messages.length > 0
+      ? messages[messages.length - 1].content
+      : null);
+
+    if (!incomingMessage) {
+      return NextResponse.json(
+        { error: 'Message content is required' },
+        { status: 400 }
+      );
+    }
+
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      systemInstruction: SYSTEM_INSTRUCTION,
     });
 
-    let lastError = 'No se pudo obtener respuesta del modelo';
+    const result = await model.generateContent(incomingMessage);
+    const responseText = result.response.text();
 
-    // Intentar en cascada a través de los modelos disponibles
-    for (const model of MODELS) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: requestBody
-        });
+    return NextResponse.json({ reply: responseText });
+  } catch (error: any) {
+    console.error('Gemini Chat API Error:', error);
 
-        const data = await response.json();
-
-        if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          return NextResponse.json({ reply: data.candidates[0].content.parts[0].text });
-        }
-
-        lastError = data.error?.message || `Error con modelo ${model}`;
-      } catch (err: unknown) {
-        lastError = err instanceof Error ? err.message : String(err);
-      }
-    }
-
-    return NextResponse.json({ error: lastError }, { status: 503 });
-
-  } catch (error: unknown) {
-    console.error('Chat error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Error interno del servidor';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || 'Internal server error while processing chat' },
+      { status: 500 }
+    );
   }
 }
