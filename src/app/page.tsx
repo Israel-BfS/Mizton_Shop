@@ -4,7 +4,7 @@ export const revalidate = 0;
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { Home, Grid, Heart, User, Sparkles, ShieldCheck, Truck, Headphones, ArrowRight } from "lucide-react";
+import { Home, Grid, Heart, Sparkles, ShieldCheck, Truck, Headphones, ArrowRight, Mail } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -12,15 +12,14 @@ import { supabase } from "@/lib/supabaseClient";
 export default async function HomePage() {
   const { data: products } = await supabase
     .from("products")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*");
 
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
-      {/* Top Promo Bar con paleta alebrije */}
+      {/* Top Promo Bar con información oficial y paleta alebrije */}
       <div className="bg-gradient-to-r from-primary via-secondary to-tertiary text-white font-label-sm text-xs md:text-sm py-2 px-margin-mobile text-center font-medium tracking-wide flex items-center justify-center gap-2 shadow-xs">
         <Sparkles size={14} className="animate-spin text-amber-200" style={{ animationDuration: '4s' }} />
-        <span>Envío gratis a todo México • Conoce a nuestra mascota oficial Mizton</span>
+        <span>Envíos a todo México (5 a 12 días hábiles) • Pagos con tarjeta vía Stripe</span>
         <Sparkles size={14} className="hidden sm:inline text-amber-200" />
       </div>
       
@@ -37,15 +36,15 @@ export default async function HomePage() {
             <div className="md:col-span-7 flex flex-col items-start justify-center gap-4 text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-amber-300/40 text-amber-300 text-xs md:text-sm font-semibold tracking-wide">
                 <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-                Inspiración Alebrije Oaxaqueña
+                Mizton Shop • Tienda Oficial
               </div>
 
               <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-white">
-                Magia, Alegría y Cuidado para tus Mascotas
+                Moda, Accesorios y Cuidado para ti y tu Mascota
               </h1>
 
               <p className="font-body-lg text-white/90 text-sm md:text-base max-w-xl leading-relaxed">
-                Descubre nuestra selección especial de accesorios y productos para el hogar, guiados por el espíritu protector y colorido de <strong className="text-amber-300">Mizton</strong>.
+                Envíos seguros a todo México en 5 a 12 días hábiles. Pagos 100% protegidos con tarjeta de crédito o débito a través de Stripe.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -57,10 +56,11 @@ export default async function HomePage() {
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </a>
                 <a
-                  href="#mascota"
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-label-md text-sm md:text-base px-5 py-3.5 rounded-xl transition-colors backdrop-blur-sm"
+                  href="mailto:bfs237@gmail.com"
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-label-md text-sm md:text-base px-5 py-3.5 rounded-xl transition-colors backdrop-blur-sm flex items-center gap-2"
                 >
-                  Conoce a Mizton 🐾
+                  <Mail size={16} />
+                  Soporte Oficial
                 </a>
               </div>
             </div>
@@ -87,14 +87,14 @@ export default async function HomePage() {
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
                     <span className="font-bold">Mizton Oficial</span>
                   </div>
-                  <span className="text-amber-300 text-[11px] font-semibold">Guardián de la Tienda</span>
+                  <span className="text-amber-300 text-[11px] font-semibold">Mascota de la Tienda</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Value Props coordinados con la paleta */}
+        {/* Value Props con información oficial de la tienda */}
         <section className="py-2">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/60 shadow-xs hover:border-primary/40 transition-colors">
@@ -103,7 +103,7 @@ export default async function HomePage() {
               </div>
               <div>
                 <h4 className="font-bold text-sm md:text-base text-on-surface">Envíos a todo México</h4>
-                <p className="text-xs text-on-surface-variant">Entrega segura hasta la puerta de tu hogar</p>
+                <p className="text-xs text-on-surface-variant">Entrega estimada de 5 a 12 días hábiles</p>
               </div>
             </div>
 
@@ -113,7 +113,7 @@ export default async function HomePage() {
               </div>
               <div>
                 <h4 className="font-bold text-sm md:text-base text-on-surface">Pagos Protegidos</h4>
-                <p className="text-xs text-on-surface-variant">Checkout cifrado con tarjeta vía Stripe</p>
+                <p className="text-xs text-on-surface-variant">Tarjetas de crédito y débito vía Stripe</p>
               </div>
             </div>
 
@@ -122,8 +122,8 @@ export default async function HomePage() {
                 <Headphones size={24} />
               </div>
               <div>
-                <h4 className="font-bold text-sm md:text-base text-on-surface">Asistencia Mizton AI</h4>
-                <p className="text-xs text-on-surface-variant">Resuelve dudas sobre envíos y compras 24/7</p>
+                <h4 className="font-bold text-sm md:text-base text-on-surface">Soporte Oficial</h4>
+                <p className="text-xs text-on-surface-variant">Atención directa en bfs237@gmail.com</p>
               </div>
             </div>
           </div>
@@ -151,14 +151,9 @@ export default async function HomePage() {
               ></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                <div>
-                  <span className="text-[10px] font-bold tracking-wider uppercase text-amber-300 bg-amber-900/60 px-2 py-0.5 rounded-full mb-1 inline-block">
-                    Consentidos
-                  </span>
-                  <h3 className="font-headline-md text-xl font-bold text-white">
-                    Para Mascotas
-                  </h3>
-                </div>
+                <h3 className="font-headline-md text-xl font-bold text-white">
+                  Para Mascotas
+                </h3>
                 <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
                   <ArrowRight size={16} />
                 </div>
@@ -176,21 +171,16 @@ export default async function HomePage() {
               ></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                <div>
-                  <span className="text-[10px] font-bold tracking-wider uppercase text-teal-300 bg-teal-900/60 px-2 py-0.5 rounded-full mb-1 inline-block">
-                    Tendencia
-                  </span>
-                  <h3 className="font-headline-md text-xl font-bold text-white">
-                    Ropa y Estilo
-                  </h3>
-                </div>
+                <h3 className="font-headline-md text-xl font-bold text-white">
+                  Ropa y Estilo
+                </h3>
                 <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <ArrowRight size={16} />
                 </div>
               </div>
             </div>
 
-            {/* Category 3: Hogar y Novedades */}
+            {/* Category 3: Lo Más Vendido */}
             <div className="relative rounded-2xl overflow-hidden h-52 group cursor-pointer border border-outline-variant/60 hover:shadow-lg transition-all">
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
@@ -201,14 +191,9 @@ export default async function HomePage() {
               ></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                <div>
-                  <span className="text-[10px] font-bold tracking-wider uppercase text-pink-300 bg-pink-900/60 px-2 py-0.5 rounded-full mb-1 inline-block">
-                    Favoritos
-                  </span>
-                  <h3 className="font-headline-md text-xl font-bold text-white">
-                    Hogar y Más
-                  </h3>
-                </div>
+                <h3 className="font-headline-md text-xl font-bold text-white">
+                  Lo Más Vendido
+                </h3>
                 <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center group-hover:bg-tertiary group-hover:text-white transition-colors">
                   <ArrowRight size={16} />
                 </div>
@@ -217,36 +202,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Mascot Spotlight & Story Section */}
-        <section id="mascota" className="rounded-3xl p-6 md:p-8 bg-gradient-to-r from-primary-container via-surface-container to-secondary-container/30 border border-outline-variant/60 relative overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-3 flex justify-center">
-              <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden border-3 border-tertiary shadow-md ring-4 ring-primary/20">
-                <Image
-                  src="/mascot.jpg"
-                  alt="Mascota Mizton"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <div className="md:col-span-9 flex flex-col gap-2 text-left">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-secondary">
-                  Identidad y Tradición
-                </span>
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold text-on-surface">
-                ¿Por qué un gato alebrije?
-              </h3>
-              <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
-                En lengua náhuatl, <em>Miztōn</em> significa cariñosamente <strong>pequeño gato</strong>. Inspirados en los alebrijes de Oaxaca, nuestra mascota combina el turquesa místico, el rosa mexicano y el oro azteca para representar la creatividad, la lealtad y el cuidado que entregamos en cada paquete enviado a cualquier rincón de la República.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Product Grid */}
+        {/* Product Grid dinámico desde Supabase */}
         <section id="catalogo" className="pt-2 pb-8">
           <div className="flex justify-between items-end mb-6">
             <div>
@@ -254,7 +210,7 @@ export default async function HomePage() {
                 Catálogo de Productos
               </h2>
               <p className="text-xs md:text-sm text-on-surface-variant mt-1">
-                Calidad garantizada con envío a todo México
+                Envíos a todo México de 5 a 12 días hábiles • Pagos protegidos vía Stripe
               </p>
             </div>
             <span className="text-xs font-semibold text-primary bg-primary-container/60 px-3 py-1.5 rounded-full border border-primary/20">
@@ -273,6 +229,9 @@ export default async function HomePage() {
             ) : (
               <div className="col-span-full py-12 text-center text-on-surface-variant bg-surface-container-low rounded-2xl border border-outline-variant/60">
                 <p>No se encontraron productos disponibles en este momento.</p>
+                <p className="text-xs text-on-surface-variant/70 mt-1">
+                  Si tienes alguna duda, escríbenos a bfs237@gmail.com.
+                </p>
               </div>
             )}
           </div>
@@ -299,10 +258,10 @@ export default async function HomePage() {
         </a>
         <a
           className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors px-3 py-1"
-          href="#mascota"
+          href="mailto:bfs237@gmail.com"
         >
-          <Heart size={22} className="mb-0.5" />
-          <span className="text-[11px]">Mizton</span>
+          <Mail size={22} className="mb-0.5" />
+          <span className="text-[11px]">Soporte</span>
         </a>
       </nav>
     </div>

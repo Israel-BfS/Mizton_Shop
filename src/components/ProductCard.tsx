@@ -9,18 +9,42 @@ interface Product {
   price_mxn?: number;
   price?: number;
   images?: string[];
+  image_url?: string;
   category?: string;
+  description?: string;
   is_new?: boolean;
 }
 
 export default function ProductCard({ product }: { product: Product }) {
   const [imageError, setImageError] = useState(false);
 
-  const rawImage = Array.isArray(product?.images) && product.images.length > 0 ? product.images[0] : null;
-  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '') : null;
+  // Soporta tanto array de images como string image_url de Supabase
+  const rawImage =
+    Array.isArray(product?.images) && product.images.length > 0
+      ? product.images[0]
+      : typeof product?.image_url === 'string'
+      ? product.image_url
+      : null;
+
+  const cleanImage = rawImage
+    ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '')
+    : null;
+
+  const finalImageUrl = cleanImage
+    ? cleanImage.startsWith('//')
+      ? 'https:' + cleanImage
+      : cleanImage
+    : null;
+
   const displayPrice = Number(product?.price_mxn ?? product?.price ?? 0);
 
-  const fallbackImage = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60';
+  const fallbackImage =
+    'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&auto=format&fit=crop&q=60';
+
+  // Limpiar etiquetas HTML de la descripción si viene con formato enriquecido
+  const cleanDescription = product?.description
+    ? product.description.replace(/<[^>]*>?/gm, '').trim()
+    : '';
 
   return (
     <Link 
@@ -29,7 +53,7 @@ export default function ProductCard({ product }: { product: Product }) {
     >
       <div className="aspect-square w-full overflow-hidden bg-surface-container-low relative">
         <img
-          src={!imageError && cleanImage ? cleanImage : fallbackImage}
+          src={!imageError && finalImageUrl ? finalImageUrl : fallbackImage}
           alt={product?.title || 'Producto'}
           onError={() => setImageError(true)}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -50,6 +74,11 @@ export default function ProductCard({ product }: { product: Product }) {
           <h3 className="font-semibold text-sm md:text-base text-on-surface line-clamp-2 group-hover:text-primary transition-colors">
             {product?.title || 'Sin título'}
           </h3>
+          {cleanDescription && (
+            <p className="text-xs text-on-surface-variant line-clamp-2 mt-1 leading-snug">
+              {cleanDescription}
+            </p>
+          )}
         </div>
         <div className="pt-2 border-t border-outline-variant/40 flex items-baseline justify-between">
           <span className="text-xs text-on-surface-variant font-medium">Precio</span>

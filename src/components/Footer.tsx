@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles, Mail } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -25,56 +25,51 @@ export default function Footer() {
                 Mizton Shop
               </span>
               <p className="text-[11px] text-amber-300 font-semibold tracking-wider uppercase">
-                Tradición & Vanguardia
+                Tienda Oficial
               </p>
             </div>
           </div>
           
           <p className="text-xs text-teal-100/70 leading-relaxed">
-            Inspirados en la artesanía de Oaxaca y el amor por nuestras mascotas y hogares. Envíos confiables a toda la República Mexicana.
+            Envíos a todo México en 5 a 12 días hábiles. Pagos seguros con tarjetas de crédito y débito procesados mediante Stripe.
           </p>
         </div>
 
-        {/* Newsletter */}
+        {/* Soporte y Contacto Oficial */}
         <div className="flex flex-col w-full max-w-sm gap-2">
           <span className="font-label-sm text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
             <Sparkles size={14} />
-            Únete a la familia Mizton
+            Contacto y Soporte Oficial
           </span>
           <p className="text-xs text-teal-100/70 mb-1">
-            Recibe promociones especiales y lanzamientos exclusivos.
+            Para dudas sobre pedidos o productos, escríbenos directamente:
           </p>
-          <div className="flex rounded-xl overflow-hidden shadow-inner border border-teal-700/60">
-            <input
-              className="flex-grow px-3.5 py-2.5 bg-teal-950/60 font-body-md text-xs text-white placeholder:text-teal-200/50 focus:outline-none focus:bg-teal-950/80"
-              placeholder="tu.correo@ejemplo.com"
-              type="email"
-            />
-            <button className="bg-secondary hover:bg-secondary/90 text-white px-5 py-2.5 font-label-md text-xs font-bold transition-colors">
-              Suscribirme
-            </button>
-          </div>
+          <a
+            href="mailto:bfs237@gmail.com"
+            className="flex items-center gap-2 p-3 bg-teal-950/60 rounded-xl border border-teal-700/60 hover:border-amber-400/60 transition-colors text-xs text-amber-300 font-semibold"
+          >
+            <Mail size={16} />
+            <span>bfs237@gmail.com</span>
+          </a>
         </div>
 
         {/* Links */}
         <nav className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-xs text-teal-100/80">
-          <Link className="hover:text-amber-300 transition-colors" href="#">
-            Privacidad
+          <Link className="hover:text-amber-300 transition-colors" href="/#catalogo">
+            Catálogo
           </Link>
-          <Link className="hover:text-amber-300 transition-colors" href="#">
-            Términos
-          </Link>
-          <Link className="hover:text-amber-300 transition-colors" href="#">
-            Contacto
-          </Link>
-          <Link className="hover:text-amber-300 transition-colors" href="#">
-            Ayuda y Envíos
-          </Link>
+          <a className="hover:text-amber-300 transition-colors" href="mailto:bfs237@gmail.com">
+            Soporte
+          </a>
+          <span className="text-teal-200/40">•</span>
+          <span className="text-teal-200/70">Envíos 5-12 días</span>
+          <span className="text-teal-200/40">•</span>
+          <span className="text-teal-200/70">Stripe Checkout</span>
         </nav>
       </div>
 
       <div className="w-full max-w-max-width mt-10 pt-6 border-t border-teal-900/60 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-teal-200/60 relative z-10">
-        <span>© {new Date().getFullYear()} Mizton Shop. Hecho con orgullo en México.</span>
+        <span>© {new Date().getFullYear()} Mizton Shop. Todos los derechos reservados.</span>
         <span className="flex items-center gap-1">
           Cuidado con cariño <Heart size={12} className="text-secondary fill-secondary" /> para tus mascotas
         </span>

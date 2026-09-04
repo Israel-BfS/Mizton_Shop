@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import { X, Send, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 type Message = {
@@ -14,7 +14,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: "model", 
-      text: "¡Hola! Soy Mizton, tu guía alebrije oficial. ¿En qué te puedo asesorar hoy sobre productos, métodos de pago o envíos a tu ciudad?" 
+      text: "¡Hola! Soy el asistente virtual oficial de Mizton Shop. ¿En qué te puedo asesorar hoy sobre productos, métodos de pago con Stripe o envíos a todo México (5 a 12 días hábiles)?" 
     },
   ]);
   const [input, setInput] = useState("");
@@ -55,7 +55,7 @@ export default function ChatWidget() {
       }
     } catch (error) {
       console.error(error);
-      setMessages((prev) => [...prev, { role: "model", text: "Lo siento, ha ocurrido un error al procesar tu solicitud." }]);
+      setMessages((prev) => [...prev, { role: "model", text: "Lo siento, ha ocurrido un error al procesar tu solicitud. Escríbenos a bfs237@gmail.com." }]);
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +68,12 @@ export default function ChatWidget() {
         <button
           onClick={() => setIsOpen(true)}
           className="relative group p-1 bg-gradient-to-tr from-primary via-secondary to-tertiary rounded-full shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center ring-4 ring-primary/20"
-          aria-label="Abrir chat con Mizton AI"
+          aria-label="Abrir chat de soporte Mizton Shop"
         >
           <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white">
             <Image
               src="/mascot.jpg"
-              alt="Mizton AI"
+              alt="Mizton Shop AI"
               fill
               className="object-cover"
             />
@@ -83,7 +83,7 @@ export default function ChatWidget() {
           {/* Tooltip en desktop */}
           <span className="hidden md:group-hover:flex absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-surface-container-lowest text-on-surface text-xs font-bold px-3 py-1.5 rounded-xl shadow-md border border-outline-variant/60 whitespace-nowrap items-center gap-1">
             <Sparkles size={12} className="text-tertiary" />
-            ¿Dudas? Habla con Mizton
+            ¿Dudas? Chat oficial de ayuda
           </span>
         </button>
       )}
@@ -97,19 +97,19 @@ export default function ChatWidget() {
               <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400 shadow-sm shrink-0">
                 <Image
                   src="/mascot.jpg"
-                  alt="Mizton AI"
+                  alt="Mizton Shop AI"
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-sm">Mizton AI</span>
+                  <span className="font-bold text-sm">Mizton Shop AI</span>
                   <span className="text-[9px] bg-amber-400/30 text-amber-200 px-1.5 py-0.2 rounded-full font-semibold border border-amber-300/40">
                     Oficial
                   </span>
                 </div>
-                <span className="text-[11px] text-teal-100/80">Tu guía alebrije de compras</span>
+                <span className="text-[11px] text-teal-100/80">Asistente Virtual de la Tienda</span>
               </div>
             </div>
 
@@ -139,7 +139,7 @@ export default function ChatWidget() {
             {isLoading && (
               <div className="bg-surface-container-lowest border border-outline-variant/60 text-on-surface-variant self-start rounded-2xl rounded-tl-xs px-4 py-2.5 text-xs animate-pulse flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
-                <span>Mizton está pensando su respuesta...</span>
+                <span>Procesando tu consulta...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -158,7 +158,7 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe tu duda a Mizton..."
+                placeholder="Escribe tu duda aquí..."
                 className="flex-1 bg-surface-container-low border border-outline-variant/80 rounded-full px-4 py-2 text-xs sm:text-sm text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 disabled={isLoading}
               />

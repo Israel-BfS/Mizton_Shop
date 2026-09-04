@@ -41,8 +41,23 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     );
   }
 
-  const rawImage = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null;
-  const cleanImage = rawImage ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '') : 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop&q=80';
+  const rawImage =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images[0]
+      : typeof product.image_url === 'string'
+      ? product.image_url
+      : null;
+
+  const cleanImage = rawImage
+    ? rawImage.split('?')[0].replace(/_\.(avif|webp)$/i, '')
+    : null;
+
+  const finalImageUrl = cleanImage
+    ? cleanImage.startsWith('//')
+      ? 'https:' + cleanImage
+      : cleanImage
+    : 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop&q=80';
+
   const price = Number(product.price_mxn ?? product.price ?? 0);
 
   return (
@@ -59,7 +74,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
           <div className="rounded-3xl overflow-hidden bg-surface-container-lowest border border-outline-variant/60 p-6 flex items-center justify-center shadow-xs">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
-              src={cleanImage} 
+              src={finalImageUrl} 
               alt={product.title} 
               className="w-full max-h-[460px] object-contain rounded-2xl" 
             />
