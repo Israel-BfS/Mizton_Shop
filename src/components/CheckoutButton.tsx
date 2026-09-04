@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Lock, ArrowRight } from "lucide-react";
 
 export default function CheckoutButton({ productId }: { productId: string | number }) {
   const [loading, setLoading] = useState(false);
@@ -33,12 +34,16 @@ export default function CheckoutButton({ productId }: { productId: string | numb
     <button
       onClick={handleCheckout}
       disabled={loading}
-      className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+      className="w-full py-4 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-[#05373B] text-white font-bold rounded-2xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
     >
+      <Lock size={18} className="opacity-90" />
       {loading ? (
         <span className="animate-pulse">Redirigiendo a pago seguro...</span>
       ) : (
-        "Comprar Ahora"
+        <>
+          <span>Comprar Ahora</span>
+          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </>
       )}
     </button>
   );

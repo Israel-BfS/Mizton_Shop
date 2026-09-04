@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 type Message = {
   role: "user" | "model";
@@ -11,7 +12,10 @@ type Message = {
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "model", text: "¡Hola! Soy el asistente virtual de Mizton Shop. ¿En qué te puedo ayudar hoy?" },
+    { 
+      role: "model", 
+      text: "¡Hola! Soy Mizton, tu guía alebrije oficial. ¿En qué te puedo asesorar hoy sobre productos, métodos de pago o envíos a tu ciudad?" 
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -59,59 +63,90 @@ export default function ChatWidget() {
 
   return (
     <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60]">
-      {/* Chat Button */}
+      {/* Botón Flotante con la Mascota */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-primary text-on-primary p-4 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center"
-          aria-label="Abrir chat"
+          className="relative group p-1 bg-gradient-to-tr from-primary via-secondary to-tertiary rounded-full shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center ring-4 ring-primary/20"
+          aria-label="Abrir chat con Mizton AI"
         >
-          <MessageCircle size={28} />
+          <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white">
+            <Image
+              src="/mascot.jpg"
+              alt="Mizton AI"
+              fill
+              className="object-cover"
+            />
+          </div>
+          {/* Badge de estado en línea */}
+          <span className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></span>
+          {/* Tooltip en desktop */}
+          <span className="hidden md:group-hover:flex absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-surface-container-lowest text-on-surface text-xs font-bold px-3 py-1.5 rounded-xl shadow-md border border-outline-variant/60 whitespace-nowrap items-center gap-1">
+            <Sparkles size={12} className="text-tertiary" />
+            ¿Dudas? Habla con Mizton
+          </span>
         </button>
       )}
 
-      {/* Chat Window */}
+      {/* Ventana de Chat */}
       {isOpen && (
-        <div className="bg-surface-container-lowest border border-outline-variant shadow-xl rounded-2xl w-[90vw] md:w-[350px] h-[500px] max-h-[80vh] flex flex-col overflow-hidden transition-all duration-300 transform scale-100 opacity-100">
-          {/* Header */}
-          <div className="bg-primary text-on-primary px-4 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <MessageCircle size={20} />
-              <span className="font-label-md text-label-md font-bold">Mizton AI</span>
+        <div className="bg-surface-container-lowest border border-outline-variant/80 shadow-2xl rounded-3xl w-[92vw] sm:w-[380px] h-[520px] max-h-[85vh] flex flex-col overflow-hidden transition-all duration-300">
+          {/* Cabecera del Chat */}
+          <div className="bg-gradient-to-r from-[#082A30] via-primary to-secondary text-white px-4 py-3.5 flex justify-between items-center relative overflow-hidden">
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400 shadow-sm shrink-0">
+                <Image
+                  src="/mascot.jpg"
+                  alt="Mizton AI"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-sm">Mizton AI</span>
+                  <span className="text-[9px] bg-amber-400/30 text-amber-200 px-1.5 py-0.2 rounded-full font-semibold border border-amber-300/40">
+                    Oficial
+                  </span>
+                </div>
+                <span className="text-[11px] text-teal-100/80">Tu guía alebrije de compras</span>
+              </div>
             </div>
+
             <button
               onClick={() => setIsOpen(false)}
-              className="text-on-primary hover:bg-white/20 p-1 rounded-full transition-colors"
+              className="text-white/80 hover:text-white hover:bg-white/20 p-1.5 rounded-full transition-colors relative z-10"
               aria-label="Cerrar chat"
             >
               <X size={20} />
             </button>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-surface-container-lowest">
+          {/* Área de Mensajes */}
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-surface-container-low/40">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`max-w-[85%] rounded-2xl px-4 py-2 font-body-md text-body-md whitespace-pre-wrap ${
+                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap shadow-xs ${
                   msg.role === "user"
-                    ? "bg-primary-container text-on-primary-container self-end rounded-tr-sm"
-                    : "bg-surface-container text-on-surface self-start rounded-tl-sm"
+                    ? "bg-primary text-white self-end rounded-tr-xs"
+                    : "bg-surface-container-lowest border border-outline-variant/60 text-on-surface self-start rounded-tl-xs"
                 }`}
               >
                 {msg.text}
               </div>
             ))}
             {isLoading && (
-              <div className="bg-surface-container text-on-surface self-start rounded-2xl rounded-tl-sm px-4 py-2 font-body-md text-body-md text-sm animate-pulse">
-                Mizton AI está escribiendo...
+              <div className="bg-surface-container-lowest border border-outline-variant/60 text-on-surface-variant self-start rounded-2xl rounded-tl-xs px-4 py-2.5 text-xs animate-pulse flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+                <span>Mizton está pensando su respuesta...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <div className="p-3 border-t border-outline-variant bg-surface">
+          {/* Área de Envío */}
+          <div className="p-3 border-t border-outline-variant/60 bg-surface-container-lowest">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -123,17 +158,17 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe un mensaje..."
-                className="flex-1 bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                placeholder="Escribe tu duda a Mizton..."
+                className="flex-1 bg-surface-container-low border border-outline-variant/80 rounded-full px-4 py-2 text-xs sm:text-sm text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-primary text-on-primary p-2 rounded-full hover:bg-surface-tint disabled:opacity-50 disabled:hover:bg-primary transition-colors flex items-center justify-center"
-                aria-label="Enviar"
+                className="bg-primary hover:bg-secondary text-white p-2.5 rounded-full disabled:opacity-40 transition-colors flex items-center justify-center shrink-0 shadow-xs"
+                aria-label="Enviar mensaje"
               >
-                <Send size={18} />
+                <Send size={16} />
               </button>
             </form>
           </div>

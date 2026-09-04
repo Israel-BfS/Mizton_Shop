@@ -10,59 +10,68 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        "on-secondary-fixed": "#141b2b",
-        "surface-container-high": "#e7e8e9",
-        "on-error-container": "#93000a",
-        "surface-container-highest": "#e1e3e4",
-        "surface-bright": "#f8f9fa",
-        "primary-fixed": "#6ffbbe",
-        "outline": "#6c7a71",
-        "secondary-container": "#d9dff5",
-        "primary-fixed-dim": "#4edea3",
-        "on-tertiary-fixed-variant": "#404754",
-        "surface-container-low": "#f3f4f5",
-        "error": "#ba1a1a",
-        "tertiary-container": "#9ca3b2",
-        "primary-container": "#10b981",
-        "on-primary-fixed": "#002113",
-        "on-surface-variant": "#3c4a42",
-        "error-container": "#ffdad6",
-        "on-tertiary-container": "#323946",
-        "surface-dim": "#d9dadb",
-        "surface-container": "#edeeef",
-        "secondary": "#575e70",
-        "on-background": "#191c1d",
-        "inverse-on-surface": "#f0f1f2",
-        "on-secondary-container": "#5c6274",
-        "inverse-surface": "#2e3132",
-        "surface-container-lowest": "#ffffff",
-        "primary": "#006c49",
-        "on-error": "#ffffff",
+        // Paleta Alebrije Mizton Shop
+        "primary": "#0A7B83",                // Turquesa / Teal artesanal (cuerpo del gato)
+        "primary-dark": "#07595F",           // Turquesa profundo
+        "primary-container": "#E0F4F5",      // Fondo turquesa suave
         "on-primary": "#ffffff",
+        "on-primary-container": "#043B3F",
+        "primary-fixed": "#6DF0EB",
+        "primary-fixed-dim": "#2DD4BF",
+
+        "secondary": "#D81B60",              // Rosa Mexicano / Magenta Pitaya (manchas y detalles)
+        "secondary-container": "#FCE4EC",    // Rosa pastel suave
         "on-secondary": "#ffffff",
+        "on-secondary-container": "#560027",
+
+        "tertiary": "#F5A623",               // Oro Azteca / Cempasúchil (collar y espirales)
+        "tertiary-container": "#FEF3C7",
         "on-tertiary": "#ffffff",
-        "on-primary-container": "#00422b",
-        "on-primary-fixed-variant": "#005236",
-        "surface-variant": "#e1e3e4",
-        "outline-variant": "#bbcabf",
-        "secondary-fixed": "#dce2f7",
-        "tertiary": "#585f6c",
-        "on-surface": "#191c1d",
-        "on-secondary-fixed-variant": "#404758",
-        "on-tertiary-fixed": "#151c27",
-        "secondary-fixed-dim": "#c0c6db",
-        "surface": "#f8f9fa",
-        "tertiary-fixed": "#dce2f3",
-        "surface-tint": "#006c49",
-        "background": "#f8f9fa",
-        "tertiary-fixed-dim": "#c0c7d6",
-        "inverse-primary": "#4edea3"
+        "on-tertiary-container": "#78350F",
+
+        // Acentos directos
+        "accent-gold": "#F5A623",
+        "accent-magenta": "#D81B60",
+        "accent-teal": "#0A7B83",
+        "accent-mint": "#2DD4BF",
+        "dark-teal": "#08262C",
+
+        // Superficies y fondos con calidez alabastro
+        "surface": "#FAF9F6",
+        "surface-container": "#F0F5F5",
+        "surface-container-low": "#F6FAF9",
+        "surface-container-high": "#E2ECEC",
+        "surface-container-highest": "#D5E3E4",
+        "surface-container-lowest": "#ffffff",
+        "surface-bright": "#FAF9F6",
+        "surface-dim": "#E5EBEA",
+        "surface-variant": "#E2ECEC",
+        "surface-tint": "#0A7B83",
+
+        "background": "#FAF9F6",
+        "on-background": "#182224",
+        "on-surface": "#182224",
+        "on-surface-variant": "#495D60",
+
+        "outline": "#6F8A8C",
+        "outline-variant": "#D0DFE1",
+
+        "inverse-surface": "#1E2A2C",
+        "inverse-on-surface": "#F0F5F5",
+        "inverse-primary": "#2DD4BF",
+
+        "error": "#BA1A1A",
+        "error-container": "#FFDAD6",
+        "on-error": "#ffffff",
+        "on-error-container": "#93000A",
       },
       borderRadius: {
         "DEFAULT": "0.125rem",
-        "lg": "0.25rem",
-        "xl": "0.5rem",
-        "full": "0.75rem"
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "2xl": "1rem",
+        "3xl": "1.5rem",
+        "full": "9999px"
       },
       spacing: {
         "margin-desktop": "64px",
